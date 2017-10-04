@@ -25,6 +25,7 @@ var restify = require('restify')
   console.log(' /createProduct')
   console.log(' /updateProduct/:id')
   console.log(' /delete/:id')
+  console.log(' /deleteAll')
   console.log('Processed request count --> Get Product: ' +getproductcounter + ', Get All Product: ' + getallproductcounter + ', Create Product: ' + createproductcounter+ ', Delete Product: ' + deleteproductcounter + ', Update Product: ' + updateproductcounter)
   
 
@@ -131,7 +132,7 @@ server.put('/updateProduct/:id', function (req, res, next) {
         }
       
       // Update the product with the persistence engine
-      productsSave.update(newProduct, function (error, product) {
+      productSave.update(newProduct, function (error, product) {
     
         // If there are any errors, pass them to next in the correct format
         if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
@@ -157,6 +158,24 @@ server.del('/delete/:id', function (req, res, next) {
         // Send a 204 OK response
         res.send(204)
         console.log('<<<' + server.url + '/delete: sending response')
+        deleteproductcounter++;
+        console.log('Processed request count --> Get Product: ' +getproductcounter + ', Get All Product: ' + getallproductcounter + ', Create Product: ' + createproductcounter+ ', Delete Product: ' + deleteproductcounter + ', Update Product: ' + updateproductcounter)
+        
+      })
+    })
+
+// Delete all products
+server.del('/deleteAll', function (req, res, next) {
+  console.log('>>>' + server.url + '/products: recieved DELETE request')
+      // Delete the product with the persistence engine
+      productSave.deleteMany({},function (error, product) {
+    
+        // If there are any errors, pass them to next in the correct format
+        if (error) return next(new restify.InvalidArgumentError(JSON.stringify(error.errors)))
+    
+        // Send a 200 OK response
+        console.log('<<<' + server.url + '/deleteAll: sending response')
+        res.send(200)
         deleteproductcounter++;
         console.log('Processed request count --> Get Product: ' +getproductcounter + ', Get All Product: ' + getallproductcounter + ', Create Product: ' + createproductcounter+ ', Delete Product: ' + deleteproductcounter + ', Update Product: ' + updateproductcounter)
         
